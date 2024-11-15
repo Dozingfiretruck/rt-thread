@@ -41,6 +41,10 @@
 #define INTF_SO_SNDBUF      7
 #define INTF_SO_SNDLOWAT    19
 #define INTF_SO_RCVLOWAT    18
+#define INTF_SO_BINDTODEVICE        25
+#define INTF_SO_TIMESTAMPNS         35
+#define INTF_SO_TIMESTAMPING        37
+#define INTF_SO_SELECT_ERR_QUEUE    45
 
 #define IMPL_SO_BROADCAST   0x0020
 #define IMPL_SO_KEEPALIVE   0x0008
@@ -59,6 +63,10 @@
 #define IMPL_SO_SNDBUF      0x1001
 #define IMPL_SO_SNDLOWAT    0x1003
 #define IMPL_SO_RCVLOWAT    0x1004
+#define IMPL_SO_BINDTODEVICE        0x100b
+#define IMPL_SO_TIMESTAMPNS         INTF_SO_TIMESTAMPNS
+#define IMPL_SO_TIMESTAMPING        INTF_SO_TIMESTAMPING
+#define IMPL_SO_SELECT_ERR_QUEUE    INTF_SO_SELECT_ERR_QUEUE
 
 /* IPPROTO_IP option names */
 #define INTF_IP_TTL 2
@@ -93,5 +101,63 @@
 /* IPPROTO_IPV6 option names */
 #define INTF_IPV6_V6ONLY    26
 #define IMPL_IPV6_V6ONLY    27
+
+struct musl_sockaddr
+{
+    uint16_t sa_family;
+    char     sa_data[14];
+};
+
+struct musl_ifmap {
+    unsigned long int mem_start;
+    unsigned long int mem_end;
+    unsigned short int base_addr;
+    unsigned char irq;
+    unsigned char dma;
+    unsigned char port;
+};
+
+struct musl_ifreq
+{
+    union
+    {
+#define IFNAMSIZ    16
+        char ifrn_name[IFNAMSIZ];
+    } ifr_ifrn;
+    union
+    {
+        struct musl_sockaddr ifru_addr;
+        struct musl_sockaddr ifru_dstaddr;
+        struct musl_sockaddr ifru_broadaddr;
+        struct musl_sockaddr ifru_netmask;
+        struct musl_sockaddr ifru_hwaddr;
+        short int ifru_flags;
+        int ifru_ivalue;
+        int ifru_mtu;
+        struct musl_ifmap ifru_map;
+        char ifru_slave[IFNAMSIZ];
+        char ifru_newname[IFNAMSIZ];
+        char *ifru_data;
+    } ifr_ifru;
+};
+
+struct musl_rtentry
+{
+    unsigned long int rt_pad1;
+    struct musl_sockaddr rt_dst;
+    struct musl_sockaddr rt_gateway;
+    struct musl_sockaddr rt_genmask;
+    unsigned short int rt_flags;
+    short int rt_pad2;
+    unsigned long int rt_pad3;
+    unsigned char rt_tos;
+    unsigned char rt_class;
+    short int rt_pad4[sizeof(long)/2-1];
+    short int rt_metric;
+    char *rt_dev;
+    unsigned long int rt_mtu;
+    unsigned long int rt_window;
+    unsigned short int rt_irtt;
+};
 
 #endif /* __LWP_SYS_SOCKET_H__ */

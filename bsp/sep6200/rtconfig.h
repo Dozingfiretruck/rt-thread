@@ -2,17 +2,6 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
-/* #define RT_DEBUG_IRQ 1 */
-/* #define RT_DEBUG_TIMER 1 */
-
-/* #define RT_DEBUG_MEM 1 */
-/* #define RT_DEBUG_MEMHEAP 1 */
-/* #define RT_DEBUG_MODULE 1 */
-/* #define RT_DEBUG_SCHEDULER 1 */
-/* #define RT_DEBUG_SLAB 1 */
-/* #define RT_DEBUG_THREAD 1 */
-/* #define RT_DEBUG_IPC 1 */
-
 /* RT_NAME_MAX*/
 #define RT_NAME_MAX	8
 
@@ -40,7 +29,7 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO		8
 #define RT_TIMER_THREAD_STACK_SIZE	512
-#define RT_TIMER_TICK_PER_SECOND	10
+#define RT_TICK_PER_SECOND	10
 
 /* SECTION: IPC */
 /* Using Semaphore */

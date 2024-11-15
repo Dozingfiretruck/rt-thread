@@ -10,6 +10,7 @@
  */
 
 #include <rtthread.h>
+#include <drv_gpio.h>
 #include <dfs_elm.h>
 #include <dfs_fs.h>
 #include <dfs_file.h>
@@ -28,7 +29,7 @@
 
 #ifdef BSP_USING_SDCARD_FATFS
 #include <drv_spi.h>
-#include <spi_msd.h>
+#include <dev_spi_msd.h>
 static int rt_hw_spi1_tfcard(void)
 {
     __HAL_RCC_GPIOC_CLK_ENABLE();

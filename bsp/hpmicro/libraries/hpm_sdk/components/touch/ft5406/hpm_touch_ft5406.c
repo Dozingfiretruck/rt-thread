@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -48,4 +48,9 @@ hpm_stat_t touch_init(I2C_Type *i2c_ptr)
     cap_int_setup();
 #endif
     return stat;
+}
+
+hpm_stat_t touch_config(bool exchange_xy, bool reverse_x, bool reverse_y)
+{
+    return status_fail;
 }

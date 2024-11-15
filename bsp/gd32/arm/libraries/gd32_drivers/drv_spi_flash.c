@@ -10,10 +10,10 @@
  */
 #include <board.h>
 #include "drv_spi.h"
-#include "spi_flash.h"
+#include "dev_spi_flash.h"
 
 #ifdef RT_USING_SFUD
-#include "spi_flash_sfud.h"
+#include "dev_spi_flash_sfud.h"
 #endif
 
 #include <rthw.h>
@@ -34,7 +34,7 @@ static int rt_hw_spi_flash_init(void)
     static struct gd32_spi_cs  spi_cs;
     spi_cs.GPIOx = GD25Q_SPI_CS_GPIOX;
     spi_cs.GPIO_Pin = GD25Q_SPI_CS_GPIOX_PIN_X;
-    
+
     rcu_periph_clock_enable(GD25Q_SPI_CS_GPIOX_CLK);
 #if defined SOC_SERIES_GD32F4xx
     gpio_mode_set(spi_cs.GPIOx, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, spi_cs.GPIO_Pin);

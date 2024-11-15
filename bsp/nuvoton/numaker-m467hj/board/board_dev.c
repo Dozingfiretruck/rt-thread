@@ -15,8 +15,8 @@
 
 #if defined(BOARD_USING_STORAGE_SPIFLASH)
 #if defined(RT_USING_SFUD)
-    #include "spi_flash.h"
-    #include "spi_flash_sfud.h"
+    #include "dev_spi_flash.h"
+    #include "dev_spi_flash_sfud.h"
 #endif
 
 #include "drv_qspi.h"
@@ -270,7 +270,7 @@ int rt_hw_fsa506_port(void)
     rt_err_t ret = RT_EOK;
 
     /* Open ebi BOARD_USING_FSA506_EBI_PORT */
-    ret = nu_ebi_init(BOARD_USING_FSA506_EBI_PORT, EBI_BUSWIDTH_16BIT, EBI_TIMING_NORMAL, EBI_OPMODE_CACCESS, EBI_CS_ACTIVE_LOW);
+    ret = nu_ebi_init(BOARD_USING_FSA506_EBI_PORT, EBI_BUSWIDTH_16BIT, EBI_TIMING_SLOW, EBI_OPMODE_CACCESS, EBI_CS_ACTIVE_LOW);
     if (ret != RT_EOK)
         return ret;
 

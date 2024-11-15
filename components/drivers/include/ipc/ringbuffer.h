@@ -10,11 +10,13 @@
 #ifndef RINGBUFFER_H__
 #define RINGBUFFER_H__
 
+#include <rtdef.h>
+#include <rtconfig.h>
+#include <rtthread.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <rtthread.h>
 
 /* ring buffer */
 struct rt_ringbuffer

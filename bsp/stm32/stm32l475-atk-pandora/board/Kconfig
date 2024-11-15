@@ -1,16 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32L475VE
-    bool
-    select SOC_SERIES_STM32L4
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
-config BOARD_STM32L475_ATK_PANDORA
-    bool
-    default y
-
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_STLINK_TO_USART
@@ -44,11 +33,11 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_DAC1
         select BSP_USING_SPI
         select BSP_USING_SPI2 # Wireless Interface (User SPI)
-        imply BSP_SPI2_TX_USING_DMA
-        imply BSP_SPI2_RX_USING_DMA
+        select BSP_SPI2_TX_USING_DMA
+        select BSP_SPI2_RX_USING_DMA
+        select RTDUINO_USING_WIRE
+        select RTDUINO_USING_SPI
         imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
-        imply RTDUINO_USING_SPI
         default n
 
     if BSP_USING_ARDUINO
@@ -57,14 +46,32 @@ menu "Onboard Peripheral Drivers"
             select BSP_USING_SPI3
             select BSP_SPI3_TX_USING_DMA
             select BSP_USING_PWM4_CH2
-            select PKG_USING_ARDUINO_ADAFRUIT_ST7735
             depends on !BSP_USING_SPI_LCD
             default n
 
-        config BSP_USING_ARDUINO_ST7789_DEMO
-            bool "Enable Arduino LCD (ST7789) library demo"
-            depends on BSP_USING_ARDUINO_ST7789
-            default n
+        if BSP_USING_ARDUINO_ST7789
+            choice
+                prompt "Arduino GUI Framework"
+
+                config BSP_USING_ARDUINO_ST7789_ADAFRUIT_GFX
+                    bool "Adafruit GFX"
+                    select PKG_USING_ARDUINO_ADAFRUIT_ST7735
+
+                config BSP_USING_ARDUINO_ST7789_TFT_ESPI
+                    bool "TFT eSPI"
+                    select PKG_USING_ARDUINO_TFT_ESPI
+            endchoice
+
+            config BSP_USING_ARDUINO_ST7789_ADAFRUIT_GFX_DEMO
+                bool "Enable ST7789 Adafruit demo"
+                depends on BSP_USING_ARDUINO_ST7789_ADAFRUIT_GFX
+                default n
+
+            config BSP_USING_ARDUINO_ST7789_TFT_ESPI_DEMO
+                bool "Enable ST7789 TFT eSPI demo"
+                depends on BSP_USING_ARDUINO_ST7789_TFT_ESPI
+                default n
+        endif
 
         config BSP_USING_ARDUINO_AHT10
             bool "Enable Arduino AHT10 sensor library"
@@ -583,7 +590,7 @@ menu "On-chip Peripheral Drivers"
             BSP_USING_STM32_SDIO use drv_sdio_adapter.c,and
             BSP_USING_SDIO use drv_sdio.c
 
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

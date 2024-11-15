@@ -19,7 +19,7 @@
 #include <drv_i2c.h>
 #include <drv_sys.h>
 
-/* Private define ---------------------------------------------------------------*/
+/* Private define --------------------------------------------------------------- */
 #define LOG_TAG    "drv.i2c"
 #define DBG_ENABLE
 #define DBG_SECTION_NAME   LOG_TAG
@@ -51,7 +51,7 @@ enum
     I2C_CNT
 };
 
-/* Private typedef --------------------------------------------------------------*/
+/* Private typedef -------------------------------------------------------------- */
 typedef struct _nu_i2c_bus
 {
     struct rt_i2c_bus_device parent;
@@ -60,7 +60,7 @@ typedef struct _nu_i2c_bus
     char *device_name;
 } nu_i2c_bus_t;
 
-/* Private variables ------------------------------------------------------------*/
+/* Private variables ------------------------------------------------------------ */
 
 
 static nu_i2c_bus_t nu_i2c_arr [ ] =
@@ -97,14 +97,14 @@ static nu_i2c_bus_t nu_i2c_arr [ ] =
 #endif
 };
 
-/* Private functions ------------------------------------------------------------*/
+/* Private functions ------------------------------------------------------------ */
 #if defined(BSP_USING_I2C)
 static rt_ssize_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                  struct rt_i2c_msg msgs[],
                                  rt_uint32_t num);
 static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus,
-                                   rt_uint32_t u32Cmd,
-                                   rt_uint32_t u32Value);
+                                   int cmd,
+                                   void *args);
 
 static const struct rt_i2c_bus_device_ops nu_i2c_ops =
 {
@@ -113,7 +113,7 @@ static const struct rt_i2c_bus_device_ops nu_i2c_ops =
     .i2c_bus_control    = nu_i2c_bus_control
 };
 
-static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t u32Cmd, rt_uint32_t u32Value)
+static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus, int u32Cmd, void *args)
 {
     nu_i2c_bus_t *nu_i2c;
 
@@ -123,7 +123,7 @@ static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t u3
     switch (u32Cmd)
     {
     case RT_I2C_DEV_CTRL_CLK:
-        I2C_SetBusClockFreq(nu_i2c->I2C, u32Value);
+        I2C_SetBusClockFreq(nu_i2c->I2C, *(rt_uint32_t *)args);
         break;
     default:
         return -RT_EIO;
@@ -204,7 +204,7 @@ static rt_err_t nu_i2c_send_address(nu_i2c_bus_t *nu_i2c,
 
             if ((I2C_GET_STATUS(nu_i2c->I2C) != NU_I2C_MASTER_STATUS_REPEAT_START) && !ignore_nack)
             {
-                //LOG_E("sending repeated START failed\n");
+                /* LOG_E("sending repeated START failed\n"); */
 
                 return -RT_EIO;
             }
@@ -294,7 +294,7 @@ static rt_ssize_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 if (I2C_GET_STATUS(nu_i2c->I2C) != NU_I2C_MASTER_STATUS_REPEAT_START)
                 {
                     i = 0;
-                    //LOG_E("Send repeat START Fail");
+                    /* LOG_E("Send repeat START Fail"); */
                     break;
                 }
             }
@@ -382,7 +382,7 @@ static rt_ssize_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 }
 #endif
 
-/* Public functions -------------------------------------------------------------*/
+/* Public functions ------------------------------------------------------------- */
 int rt_hw_i2c_init(void)
 {
     int i;

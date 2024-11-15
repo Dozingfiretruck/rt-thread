@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -16,8 +16,8 @@
 #define TSEG1_MIN_FOR_CAN2_0 (2U)
 #define TSEG1_MAX_FOR_CAN2_0 (65U)
 
-#define TSEG1_MIN_FOR_CANFD_NORMINAL (2U)
-#define TSEG1_MAX_FOR_CANFD_NORMINAL (65U)
+#define TSEG1_MIN_FOR_CANFD_NOMINAL (2U)
+#define TSEG1_MAX_FOR_CANFD_NOMINAL (65U)
 
 #define TSEG1_MIN_FOR_CANFD_DATA (2U)
 #define TSEG1_MAX_FOR_CANFD_DATA (17U)
@@ -25,8 +25,8 @@
 #define TSEG2_MIN_FOR_CAN2_0 (1U)
 #define TSEG2_MAX_FOR_CAN2_0 (8U)
 
-#define TSEG2_MIN_FOR_CANFD_NORMINAL (1U)
-#define TSEG2_MAX_FOR_CANFD_NORMINAL (32U)
+#define TSEG2_MIN_FOR_CANFD_NOMINAL (1U)
+#define TSEG2_MAX_FOR_CANFD_NOMINAL (32U)
 
 #define TSEG2_MIN_FOR_CANFD_DATA (1U)
 #define TSEG2_MAX_FOR_CANFD_DATA (8U)
@@ -34,8 +34,8 @@
 #define TSJW_MIN_FOR_CAN2_0 (1U)
 #define TSJW_MAX_FOR_CAN2_0 (16U)
 
-#define TSJW_MIN_FOR_CANFD_NORMINAL (1U)
-#define TSJW_MAX_FOR_CANFD_NORMINAL (16U)
+#define TSJW_MIN_FOR_CANFD_NOMINAL (1U)
+#define TSJW_MAX_FOR_CANFD_NOMINAL (16U)
 
 #define TSJW_MIN_FOR_CANFD_DATA (1U)
 #define TSJW_MAX_FOR_CANFD_DATA (8U)
@@ -44,7 +44,7 @@
 #define NUM_TQ_MAX_FOR_CAN2_0 (TSEG1_MAX_FOR_CAN2_0 + TSEG2_MAX_FOR_CAN2_0)
 
 #define NUM_TQ_MIN_FOR_CANFD_NOMINAL (8U)
-#define NUM_TQ_MAX_FOR_CANFD_NOMINAL (TSEG1_MAX_FOR_CANFD_NORMINAL + TSEG2_MAX_FOR_CANFD_NORMINAL)
+#define NUM_TQ_MAX_FOR_CANFD_NOMINAL (TSEG1_MAX_FOR_CANFD_NOMINAL + TSEG2_MAX_FOR_CANFD_NOMINAL)
 
 #define NUM_TQ_MIN_FOR_CANFD_DATA (8U)
 #define NUM_TQ_MAX_FOR_CANFD_DATA (TSEG1_MAX_FOR_CANFD_DATA + TSEG2_MAX_FOR_CANFD_DATA)
@@ -55,8 +55,6 @@
 
 #define CAN_FILTER_INDEX_MAX (15U)
 #define CAN_FILTER_NUM_MAX (16U)
-
-#define PRESCALER_MAX (256U)
 
 #define CAN_TIMEOUT_CNT (0xFFFFFFUL)
 
@@ -84,60 +82,61 @@ typedef struct {
 /**
  * @brief CAN bit timing list for all supported bit timing modes
  */
-static const can_bit_timing_table_t s_can_bit_timing_tbl[3] =
+static const can_bit_timing_table_t s_can_bit_timing_tbl[3] = {
         {
-                {
-                        .tq_min = NUM_TQ_MIN_FOR_CAN2_0,
-                        .tq_max = NUM_TQ_MAX_FOR_CAN2_0,
-                        .seg1_min = TSEG1_MIN_FOR_CAN2_0,
-                        .seg1_max = TSEG1_MAX_FOR_CAN2_0,
-                        .seg2_min = TSEG2_MIN_FOR_CAN2_0,
-                        .seg2_max = TSEG2_MAX_FOR_CAN2_0,
-                        .sjw_min = TSJW_MIN_FOR_CAN2_0,
-                        .sjw_max = TSJW_MAX_FOR_CAN2_0,
-                        .min_diff_seg1_minus_seg2 = 2,
-                },
-                {
-                        .tq_min = NUM_TQ_MIN_FOR_CANFD_NOMINAL,
-                        .tq_max = NUM_TQ_MAX_FOR_CANFD_NOMINAL,
-                        .seg1_min = TSEG1_MIN_FOR_CANFD_NORMINAL,
-                        .seg1_max = TSEG1_MAX_FOR_CANFD_NORMINAL,
-                        .seg2_min = TSEG2_MIN_FOR_CANFD_NORMINAL,
-                        .seg2_max = TSEG2_MAX_FOR_CANFD_NORMINAL,
-                        .sjw_min = TSJW_MIN_FOR_CANFD_NORMINAL,
-                        .sjw_max = TSJW_MAX_FOR_CANFD_NORMINAL,
-                        .min_diff_seg1_minus_seg2 = 2,
-                },
-                {
-                        .tq_min = NUM_TQ_MIN_FOR_CANFD_DATA,
-                        .tq_max = NUM_TQ_MAX_FOR_CANFD_DATA,
-                        .seg1_min = TSEG1_MIN_FOR_CANFD_DATA,
-                        .seg1_max = TSEG1_MAX_FOR_CANFD_DATA,
-                        .seg2_min = TSEG2_MIN_FOR_CANFD_DATA,
-                        .seg2_max = TSEG2_MAX_FOR_CANFD_DATA,
-                        .sjw_min = TSJW_MIN_FOR_CANFD_DATA,
-                        .sjw_max = TSJW_MAX_FOR_CANFD_DATA,
-                        .min_diff_seg1_minus_seg2 = 1,
-                }
-        };
+                .tq_min = NUM_TQ_MIN_FOR_CAN2_0,
+                .tq_max = NUM_TQ_MAX_FOR_CAN2_0,
+                .seg1_min = TSEG1_MIN_FOR_CAN2_0,
+                .seg1_max = TSEG1_MAX_FOR_CAN2_0,
+                .seg2_min = TSEG2_MIN_FOR_CAN2_0,
+                .seg2_max = TSEG2_MAX_FOR_CAN2_0,
+                .sjw_min = TSJW_MIN_FOR_CAN2_0,
+                .sjw_max = TSJW_MAX_FOR_CAN2_0,
+                .min_diff_seg1_minus_seg2 = 2,
+        },
+        {
+                .tq_min = NUM_TQ_MIN_FOR_CANFD_NOMINAL,
+                .tq_max = NUM_TQ_MAX_FOR_CANFD_NOMINAL,
+                .seg1_min = TSEG1_MIN_FOR_CANFD_NOMINAL,
+                .seg1_max = TSEG1_MAX_FOR_CANFD_NOMINAL,
+                .seg2_min = TSEG2_MIN_FOR_CANFD_NOMINAL,
+                .seg2_max = TSEG2_MAX_FOR_CANFD_NOMINAL,
+                .sjw_min = TSJW_MIN_FOR_CANFD_NOMINAL,
+                .sjw_max = TSJW_MAX_FOR_CANFD_NOMINAL,
+                .min_diff_seg1_minus_seg2 = 2,
+        },
+        {
+                .tq_min = NUM_TQ_MIN_FOR_CANFD_DATA,
+                .tq_max = NUM_TQ_MAX_FOR_CANFD_DATA,
+                .seg1_min = TSEG1_MIN_FOR_CANFD_DATA,
+                .seg1_max = TSEG1_MAX_FOR_CANFD_DATA,
+                .seg2_min = TSEG2_MIN_FOR_CANFD_DATA,
+                .seg2_max = TSEG2_MAX_FOR_CANFD_DATA,
+                .sjw_min = TSJW_MIN_FOR_CANFD_DATA,
+                .sjw_max = TSJW_MAX_FOR_CANFD_DATA,
+                .min_diff_seg1_minus_seg2 = 1,
+        }
+};
 
 /***********************************************************************************************************************
  *
  *  Prototypes
  */
-static uint32_t find_closest_prescaler(uint32_t num_tq_mul_prescaler, uint32_t start_prescaler,
+static uint32_t find_optimal_prescaler(uint32_t num_tq_mul_prescaler, uint32_t start_prescaler,
                                        uint32_t max_tq, uint32_t min_tq);
 
 static uint8_t can_get_data_words_from_dlc(uint32_t dlc);
 
 static void can_fill_tx_buffer(CAN_Type *base, const can_transmit_buf_t *message);
 
+static bool is_can_bit_timing_param_valid(can_bit_timing_option_t option, const can_bit_timing_param_t *param);
+
 
 /***********************************************************************************************************************
  *
  *  Codes
  */
-static uint32_t find_closest_prescaler(uint32_t num_tq_mul_prescaler, uint32_t start_prescaler,
+static uint32_t find_optimal_prescaler(uint32_t num_tq_mul_prescaler, uint32_t start_prescaler,
                                        uint32_t max_tq, uint32_t min_tq)
 {
     bool has_found = false;
@@ -150,16 +149,16 @@ static uint32_t find_closest_prescaler(uint32_t num_tq_mul_prescaler, uint32_t s
             ++prescaler;
             continue;
         } else {
-            has_found = true;
-            break;
-        }
-        uint32_t tq = num_tq_mul_prescaler / prescaler;
-        if (tq * prescaler == num_tq_mul_prescaler) {
-            has_found = true;
-            break;
-        } else if (tq < min_tq) {
-            has_found = false;
-            break;
+            uint32_t tq = num_tq_mul_prescaler / prescaler;
+            if (tq * prescaler == num_tq_mul_prescaler) {
+                has_found = true;
+                break;
+            } else if (tq < min_tq) {
+                has_found = false;
+                break;
+            } else {
+                ++prescaler;
+            }
         }
     }
 
@@ -195,7 +194,7 @@ hpm_stat_t can_calculate_bit_timing(uint32_t src_clk_freq, can_bit_timing_option
         /* Find out the minimum prescaler */
         uint32_t current_prescaler;
         while (!has_found) {
-            current_prescaler = find_closest_prescaler(num_tq_mul_prescaler, start_prescaler,
+            current_prescaler = find_optimal_prescaler(num_tq_mul_prescaler, start_prescaler,
                                                        tbl->tq_max,
                                                        tbl->tq_min);
             if ((current_prescaler < start_prescaler) || (current_prescaler > NUM_PRESCALE_MAX)) {
@@ -240,6 +239,28 @@ hpm_stat_t can_calculate_bit_timing(uint32_t src_clk_freq, can_bit_timing_option
     return status;
 }
 
+static bool is_can_bit_timing_param_valid(can_bit_timing_option_t option, const can_bit_timing_param_t *param)
+{
+    bool result = false;
+    const can_bit_timing_table_t *tbl = &s_can_bit_timing_tbl[(uint8_t) option];
+    do {
+        if ((param->num_seg1 < tbl->seg1_min) || (param->num_seg1 > tbl->seg1_max)) {
+            break;
+        }
+        if ((param->num_seg2 < tbl->seg2_min) || (param->num_seg2 > tbl->seg2_max)) {
+            break;
+        }
+        if ((param->num_sjw < tbl->sjw_min) || (param->num_sjw > tbl->sjw_max)) {
+            break;
+        }
+        if (param->prescaler > NUM_PRESCALE_MAX) {
+            break;
+        }
+        result = true;
+    } while (false);
+
+    return result;
+}
 
 hpm_stat_t can_set_bit_timing(CAN_Type *base, can_bit_timing_option_t option,
                               uint32_t src_clk_freq, uint32_t baudrate,
@@ -323,30 +344,30 @@ static uint8_t can_get_data_words_from_dlc(uint32_t dlc)
         copy_words = (dlc + 3U) / sizeof(uint32_t);
     } else {
         switch (dlc) {
-            case can_payload_size_12:
-                copy_words = 3U;
-                break;
-            case can_payload_size_16:
-                copy_words = 4U;
-                break;
-            case can_payload_size_20:
-                copy_words = 5U;
-                break;
-            case can_payload_size_24:
-                copy_words = 6U;
-                break;
-            case can_payload_size_32:
-                copy_words = 8U;
-                break;
-            case can_payload_size_48:
-                copy_words = 12U;
-                break;
-            case can_payload_size_64:
-                copy_words = 16U;
-                break;
-            default:
-                /* Code should never touch here */
-                break;
+        case can_payload_size_12:
+            copy_words = 3U;
+            break;
+        case can_payload_size_16:
+            copy_words = 4U;
+            break;
+        case can_payload_size_20:
+            copy_words = 5U;
+            break;
+        case can_payload_size_24:
+            copy_words = 6U;
+            break;
+        case can_payload_size_32:
+            copy_words = 8U;
+            break;
+        case can_payload_size_48:
+            copy_words = 12U;
+            break;
+        case can_payload_size_64:
+            copy_words = 16U;
+            break;
+        default:
+            /* Code should never touch here */
+            break;
         }
     }
 
@@ -412,7 +433,7 @@ hpm_stat_t can_send_high_priority_message_blocking(CAN_Type *base, const can_tra
     hpm_stat_t status = status_invalid_argument;
 
     do {
-        HPM_BREAK_IF ((base == NULL) || (message == NULL));
+        HPM_BREAK_IF((base == NULL) || (message == NULL));
         status = status_success;
 
         /* Select the high-priority buffer */
@@ -491,7 +512,7 @@ hpm_stat_t can_receive_message_blocking(CAN_Type *base, can_receive_buf_t *messa
     hpm_stat_t status = status_invalid_argument;
 
     do {
-        HPM_BREAK_IF ((base == NULL) || (message == NULL));
+        HPM_BREAK_IF((base == NULL) || (message == NULL));
 
         while (CAN_CMD_STA_CMD_CTRL_RSTAT_GET(base->CMD_STA_CMD_CTRL) == CAN_RXBUF_IS_EMPTY) {
 
@@ -612,8 +633,8 @@ hpm_stat_t can_get_default_config(can_config_t *config)
 
         config->mode = can_mode_normal;
         config->enable_self_ack = false;
-        config->disable_re_transmission_for_stb = false;
-        config->disable_re_transmission_for_ptb = false;
+        config->disable_stb_retransmission = false;
+        config->disable_ptb_retransmission = false;
         config->enable_tx_buffer_priority_mode = false;
         config->enable_tdc = false;
 
@@ -646,22 +667,48 @@ hpm_stat_t can_init(CAN_Type *base, can_config_t *config, uint32_t src_clk_freq)
 
         if (!config->use_lowlevel_timing_setting) {
             if (config->enable_canfd) {
-                status = can_set_bit_timing(base, can_bit_timing_canfd_norminal,
-                                            src_clk_freq, config->baudrate,
-                                            config->can20_samplepoint_min, config->can20_samplepoint_max);
+                status = can_set_bit_timing(base,
+                                            can_bit_timing_canfd_nominal,
+                                            src_clk_freq,
+                                            config->baudrate,
+                                            config->can20_samplepoint_min,
+                                            config->can20_samplepoint_max);
                 HPM_BREAK_IF(status != status_success);
-                status = can_set_bit_timing(base, can_bit_timing_canfd_data,
-                                            src_clk_freq, config->baudrate_fd,
-                                            config->canfd_samplepoint_min, config->canfd_samplepoint_max);
+                status = can_set_bit_timing(base,
+                                            can_bit_timing_canfd_data,
+                                            src_clk_freq,
+                                            config->baudrate_fd,
+                                            config->canfd_samplepoint_min,
+                                            config->canfd_samplepoint_max);
             } else {
-                status = can_set_bit_timing(base, can_bit_timing_can2_0,
-                                            src_clk_freq, config->baudrate,
-                                            config->can20_samplepoint_min, config->can20_samplepoint_max);
+                status = can_set_bit_timing(base,
+                                            can_bit_timing_can2_0,
+                                            src_clk_freq,
+                                            config->baudrate,
+                                            config->can20_samplepoint_min,
+                                            config->can20_samplepoint_max);
             }
         } else {
-            can_set_slow_speed_timing(base, &config->can_timing);
             if (config->enable_canfd) {
+                bool param_valid = is_can_bit_timing_param_valid(can_bit_timing_canfd_nominal, &config->can_timing);
+                if (!param_valid) {
+                    status = status_can_invalid_bit_timing;
+                    break;
+                }
+                param_valid = is_can_bit_timing_param_valid(can_bit_timing_canfd_data, &config->canfd_timing);
+                if (!param_valid) {
+                    status = status_can_invalid_bit_timing;
+                    break;
+                }
+                can_set_slow_speed_timing(base, &config->can_timing);
                 can_set_fast_speed_timing(base, &config->canfd_timing);
+            } else {
+                bool param_valid = is_can_bit_timing_param_valid(can_bit_timing_can2_0, &config->can_timing);
+                if (!param_valid) {
+                    status = status_can_invalid_bit_timing;
+                    break;
+                }
+                can_set_slow_speed_timing(base, &config->can_timing);
             }
             status = status_success;
         }
@@ -672,21 +719,8 @@ hpm_stat_t can_init(CAN_Type *base, can_config_t *config, uint32_t src_clk_freq)
 
         HPM_BREAK_IF(status != status_success);
 
-        if (config->disable_re_transmission_for_ptb) {
-            base->CMD_STA_CMD_CTRL |= CAN_CMD_STA_CMD_CTRL_TPSS_MASK;
-        } else {
-            base->CMD_STA_CMD_CTRL &= ~CAN_CMD_STA_CMD_CTRL_TPSS_MASK;
-        }
 
-        if (config->disable_re_transmission_for_stb) {
-            base->CMD_STA_CMD_CTRL |= CAN_CMD_STA_CMD_CTRL_TSSS_MASK;
-        } else {
-            base->CMD_STA_CMD_CTRL &= ~CAN_CMD_STA_CMD_CTRL_TSSS_MASK;
-        }
-
-        can_enable_self_ack(base, config->enable_self_ack);
-
-        /* Configure CAN filters */
+        /* Configure the CAN filters */
         if (config->filter_list_num > CAN_FILTER_NUM_MAX) {
             status = status_can_filter_num_invalid;
             break;
@@ -713,8 +747,18 @@ hpm_stat_t can_init(CAN_Type *base, can_config_t *config, uint32_t src_clk_freq)
 
         can_reset(base, false);
 
+        /* The following mode must be set when the CAN controller is not in reset mode */
+
+        /* Disable re-transmission on PTB on demand */
+        can_disable_ptb_retransmission(base, config->disable_ptb_retransmission);
+        /* Disable re-transmission on STB on demand */
+        can_disable_stb_retransmission(base, config->disable_stb_retransmission);
+
+        /* Set Self-ack mode*/
+        can_enable_self_ack(base, config->enable_self_ack);
+
         /* Set CAN work mode */
-        can_set_mode(base, config->mode);
+        can_set_node_mode(base, config->mode);
 
         /* Configure TX Buffer priority mode */
         can_select_tx_buffer_priority_mode(base, config->enable_tx_buffer_priority_mode);
@@ -729,4 +773,13 @@ hpm_stat_t can_init(CAN_Type *base, can_config_t *config, uint32_t src_clk_freq)
     } while (false);
 
     return status;
+}
+
+void can_deinit(CAN_Type *base)
+{
+    do {
+        HPM_BREAK_IF(base == NULL);
+        can_force_bus_off(base);
+        can_reset(base, true);
+    } while (false);
 }

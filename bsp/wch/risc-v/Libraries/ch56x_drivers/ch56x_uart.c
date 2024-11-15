@@ -8,15 +8,14 @@
  * 2022-07-15     Emuzit            first version
  */
 #include <rthw.h>
-#include <rtdebug.h>
 #include <ipc/completion.h>
 #include <ipc/dataqueue.h>
 #ifdef RT_USING_SERIAL_V2
-    #include <drivers/serial_v2.h>
+    #include <drivers/dev_serial_v2.h>
 #else
-    #include <drivers/serial.h>
+    #include <drivers/dev_serial.h>
 #endif
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 #include "ch56x_sys.h"
 #include "ch56x_uart.h"
 #include "isr_sp.h"

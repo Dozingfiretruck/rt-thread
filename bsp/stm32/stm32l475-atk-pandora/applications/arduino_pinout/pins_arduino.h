@@ -12,6 +12,8 @@
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 
+#include <rtconfig.h>
+
 /* pins alias. Must keep in sequence */
 #define D0        (0)
 #define D1        (1)
@@ -59,22 +61,16 @@
 #define A3        (43)
 #define DAC0      (44)
 
+#define RTDUINO_PIN_MAX_LIMIT DAC0 /* pin number max limit check */
+
 #define F_CPU          80000000L  /* CPU:80MHz */
 
 #define LED_BUILTIN     D22  /* Default Built-in LED */
 
-/*
- * High accuracy timing is provided by hardware timer 7.
- * ALL of the Cortex-M CPU don't need to provide extra hardware timer.
- * RTduino will automatically use Cortex-M internal timer to provide the
- * high accuracy timing.
- * This is just an example to show how to use hardware timer to provide
- * high accuracy timing for RTduino.
- */
-#define RTDUINO_DEFAULT_HWTIMER_DEVICE_NAME      "timer7"
-
 /* Serial2 - PA2-TX  PA3-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME     "uart2"
+
+#define RTDUINO_TONE_HWTIMER_DEVICE_NAME "timer7"
 
 /* I2C */
 #if defined(BSP_USING_ARDUINO_AHT10)

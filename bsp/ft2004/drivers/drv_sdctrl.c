@@ -14,7 +14,7 @@
 #include "ft_debug.h"
 #include "ft_types.h"
 #include "ft_generic_timer.h"
-#include <drivers/mmcsd_core.h>
+#include <drivers/dev_mmcsd_core.h>
 #include "interrupt.h"
 #include "rtconfig.h"
 #include "ft_cache.h"
@@ -598,7 +598,7 @@ int rthw_sdctrl_init(void)
 
 #endif
     normalIrqFlgs |= NORMAL_IRQ_CC;
-    /* register handler、irq enable bit and wait callback */
+    /* register handler irq enable bit and wait callback */
     FSdCtrl_SetHandler(ft_sdctrl_p, FTSDCTRL_CMDIRQID, rthw_sdctrl_nomarl_callback, ft_sdctrl_p);
     FSdCtrl_NormalIrqSet(ft_sdctrl_p, normalIrqFlgs);
     FSdCtrl_CmdWaitRegister(ft_sdctrl_p, rthw_sdctrl_cmd_wait);

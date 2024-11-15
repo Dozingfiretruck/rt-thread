@@ -20,9 +20,6 @@
 
 #include "phytium_cpu.h"
 
-
-#if defined(TARGET_ARMV8_AARCH64)
-
 /**
 @name: phytium_cpu_id_mapping
 @msg: Map Phytium CPU ID
@@ -32,43 +29,28 @@
 */
 int phytium_cpu_id_mapping(int cpu_id)
 {
-#if defined(TARGET_E2000Q)
-#if RT_CPUS_NR <= 2
+#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
     switch (cpu_id)
     {
-    case 0:
-        return 2;
-    case 1:
-        return 3;
-    case 2:
-        return 0;
-    case 3:
-        return 1;
-    default:
-        RT_ASSERT(0);
-        return 0;
-        break;
+        case 0:
+            return 2;
+        case 1:
+            return 3;
+        case 2:
+            return 0;
+        case 3:
+            return 1;
+        default:
+            RT_ASSERT(0);
+            return 0;
+            break;
     }
-#else
-    return (int)cpu_id;
-#endif
 #else
     return (int)cpu_id;
 #endif
 }
 
-int phytium_cpu_id(void)
-{
-    FError ret;
-    u32 cpu_id;
-    ret = GetCpuId(&cpu_id);
-
-    if (ret != ERR_SUCCESS)
-    {
-        RT_ASSERT(0);
-    }
-    return phytium_cpu_id_mapping(cpu_id);
-}
+#if defined(TARGET_ARMV8_AARCH32)
 
 int rt_hw_cpu_id(void)
 {
@@ -82,52 +64,10 @@ int rt_hw_cpu_id(void)
     }
     return phytium_cpu_id_mapping(cpu_id);
 }
-
-
-#else
-
-int phytium_cpu_id_mapping(int cpu_id)
-{
-#if defined(TARGET_E2000Q)
-    switch (cpu_id)
-    {
-    case 0:
-        return 2;
-    case 1:
-        return 3;
-    case 2:
-        return 0;
-    case 3:
-        return 1;
-    default:
-        RT_ASSERT(0);
-        return 0;
-        break;
-    }
-#else
-    return (int)cpu_id;
-#endif
-}
-
-int rt_hw_cpu_id(void)
-{
-    FError ret;
-    u32 cpu_id;
-    ret = GetCpuId(&cpu_id);
-
-    if (ret != ERR_SUCCESS)
-    {
-        RT_ASSERT(0);
-    }
-
-    return phytium_cpu_id_mapping(cpu_id);
-}
-
-
 
 rt_uint64_t get_main_cpu_affval(void)
 {
-#if defined(TARGET_E2000Q)
+#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
     return CORE2_AFF;
 #else
     return CORE0_AFF;

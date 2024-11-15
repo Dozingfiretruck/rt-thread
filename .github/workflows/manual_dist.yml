@@ -1,4 +1,14 @@
-name: RT-Thread BSP dist manual trigger
+#
+# Copyright (c) 2006-2023, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2023-07-01     Supperthomas the first version
+# 2024-09-06     Supperthomas add debug for action and add cppcheck for project
+#
+name:  manual_scons_dist_trigger_only_one
 
 # Controls when the action will run. Triggers 'scons --dist' to build the dist
 on:
@@ -23,11 +33,17 @@ on:
           - "sourcery-riscv-none-embed"
           - "sourcery-riscv64-unknown-elf"
           - "gcc"
+          - "sourcery-riscv32-esp32"
       bsp_config:
-        description: 'Type a config you want mannual test in .config, like CONFIG_BSP_USING_I2C CONFIG_BSP_USING_WDT '
+        description: 'Type a config you want mannual test in .config, like: CONFIG_RT_USING_DEBUG=y,CONFIG_RT_DEBUGING_COLOR=y,CONFIG_RT_DEBUGING_CONTEXT=y'
         required: false
         type: string
-        default: 'CONFIG_BSP_USING_GPIO'
+        default: 'CONFIG_RT_USING_DEBUG=y,CONFIG_RT_DEBUGING_COLOR=y,CONFIG_RT_DEBUGING_CONTEXT=y'
+      dist_flag:
+        description: 'True to dist all bsp, False not dist'
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -37,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     name: ${{ github.event.inputs.bsp_options }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
@@ -47,13 +63,13 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libncurses5 libncurses5-dev libncursesw5-dev scons
-          sudo python -m pip install --upgrade pip -qq
-          pip install requests -qq
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
-          python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
+          sudo apt-get -qq install cppcheck
 
       - name: Install Arm ToolChains
         if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-arm' && success() }}
@@ -70,10 +86,11 @@ jobs:
         run: |
           wget -q https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz
           sudo tar zxf LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz -C /opt
+          sudo apt-get -qq install libncurses5 libncurses5-dev libncursesw5-dev
           /opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin/clang --version
           echo "RTT_CC=llvm-arm" >> $GITHUB_ENV
           echo "RTT_EXEC_PATH=/opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin" >> $GITHUB_ENV
-
+          
       - name: Install AArch64 ToolChains
         if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-aarch64' && success() }}
         shell: bash
@@ -108,8 +125,17 @@ jobs:
           /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
           echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
 
-      - name: Install Simulator Tools
-        if: ${{ github.event.inputs.bsp_options == 'simulator' && success() }}
+      - name: Install riscv32-esp-elf ToolChains
+        if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-riscv32-esp32' && success() }}
+        run: |
+          wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+          sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+          /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
+          pip3 install esptool
+          echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
+
+      - name: Install GCC Tools
+        if: ${{ github.event.inputs.bsp_tool_chain == 'gcc' && success() }}
         run: |
           sudo apt-get -qq install libsdl2-dev
 
@@ -123,16 +149,21 @@ jobs:
           source ~/.env/env.sh
           echo $RTT_BSP
           ls bsp/$RTT_BSP/Kconfig && scons -C bsp/$RTT_BSP --pyconfig-silent
-          sed -i "s/# ${{ github.event.inputs.bsp_config }} is not set/${{ github.event.inputs.bsp_config }}=y/g" bsp/$RTT_BSP/.config
+          config=${{ github.event.inputs.bsp_config}}
+          echo "$config"
+          echo "$config" >> bsp/$RTT_BSP/.config
+          insert_code="env.Tool('compilation_db')\nenv.CompilationDatabase()\n"
+          sed -i "/DoBuilding(TARGET, objs)/i $insert_code" bsp/$RTT_BSP/SConstruct
+          scons -C bsp/$RTT_BSP --pyconfig-silent
           pushd bsp/$RTT_BSP && pkgs --update && popd
+          cat bsp/$RTT_BSP/.config
           scons -C bsp/$RTT_BSP -j$(nproc) 
-          mkdir -p ${{ github.workspace }}/$RTT_BSP 
-          cp -r bsp/$RTT_BSP ${{ github.workspace }}/$RTT_BSP/
-          scons --dist -C bsp/$RTT_BSP
-          cp bsp/$RTT_BSP/dist/project.zip ${{ github.workspace }}/$RTT_BSP/
-          ls bsp/$RTT_BSP/dist
+          ls bsp/$RTT_BSP
+          cppcheck --project=bsp/$RTT_BSP/compile_commands.json 
           pwd
+
       - uses: actions/upload-artifact@v3
+        if:  ${{ github.event.inputs.dist_flag }} 
         with:
           name: dist_file
           path: ${{ github.workspace }}/${{ github.event.inputs.bsp_options }}/*

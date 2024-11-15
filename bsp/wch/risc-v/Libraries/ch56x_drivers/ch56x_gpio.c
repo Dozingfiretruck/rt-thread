@@ -8,8 +8,7 @@
  * 2022-07-15     Emuzit            first version
  */
 #include <rthw.h>
-#include <rtdebug.h>
-#include <drivers/pin.h>
+#include <drivers/dev_pin.h>
 #include "ch56x_gpio.h"
 #include "isr_sp.h"
 
@@ -150,7 +149,7 @@ static void gpio_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t v
         BITS_SET(px->OUT, bitpos);
 }
 
-static rt_int8_t gpio_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t gpio_pin_read(struct rt_device *device, rt_base_t pin)
 {
     volatile struct gpio_px_regs *px;
 
@@ -191,6 +190,8 @@ static rt_base_t gpio_pin_get(const char *name)
         }
     }
 
+out:
+    rt_kprintf("PX.nn X: A,B,C,D...  nn: 0~31, e.g. PA.0\n");
     return -1;
 }
 

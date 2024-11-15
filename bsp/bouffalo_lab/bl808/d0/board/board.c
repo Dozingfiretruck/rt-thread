@@ -38,7 +38,7 @@ void init_bss(void)
     unsigned int *dst;
 
     dst = &__bss_start;
-    while (dst < &__bss_end)
+    while ((rt_ubase_t)dst < (rt_ubase_t)&__bss_end)
     {
         *dst++ = 0;
     }
@@ -53,8 +53,6 @@ static void __rt_assert_handler(const char *ex_string, const char *func, rt_size
 
 void primary_cpu_entry(void)
 {
-    extern void entry(void);
-
     /* disable global interrupt */
     rt_hw_interrupt_disable();
     rt_assert_set_hook(__rt_assert_handler);
@@ -64,7 +62,7 @@ void primary_cpu_entry(void)
 
 #define IOREMAP_SIZE (1ul << 30)
 
-#ifndef ARCH_KERNEL_IN_HIGH_VA
+#ifndef ARCH_REMAP_KERNEL
 #define IOREMAP_VEND USER_VADDR_START
 #else
 #define IOREMAP_VEND 0ul

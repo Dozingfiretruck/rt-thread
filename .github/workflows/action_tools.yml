@@ -34,18 +34,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: Tools
+    if: github.repository_owner == 'RT-Thread'
     strategy:
       fail-fast: false
     env:
       TEST_BSP_ROOT: bsp/stm32/stm32f407-atk-explorer
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install Tools
       shell: bash
       run: |
-        sudo apt-get update
-        sudo apt-get -yqq install scons
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
 
     - name: Install Arm ToolChains
       if: ${{ success() }}
@@ -75,10 +77,11 @@ jobs:
       if: ${{ success() }}
       run: |
         echo "Test to dist project"
-        scons --dist -C $TEST_BSP_ROOT
+        scons --dist --project-name=project -C $TEST_BSP_ROOT
         scons --dist-ide -C $TEST_BSP_ROOT
         ls $TEST_BSP_ROOT
         ls $TEST_BSP_ROOT/dist
+        scons --pyconfig-silent -C $TEST_BSP_ROOT/dist/project
+        scons --pyconfig-silent -C $TEST_BSP_ROOT/rt-studio-project
         scons -C $TEST_BSP_ROOT/dist/project
         scons -C $TEST_BSP_ROOT/rt-studio-project
-        

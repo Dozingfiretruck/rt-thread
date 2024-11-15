@@ -19,7 +19,7 @@
 
 #define ENTER_INTERRUPT()  ICU.SWINTR.BIT.SWINT = 1;
 
-extern volatile rt_uint8_t rt_interrupt_nest;
+extern volatile rt_atomic_t rt_interrupt_nest;
 
 
 /* switch flag on interrupt and thread pointer to save switch record */
@@ -174,17 +174,6 @@ void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to)
     ENTER_INTERRUPT();
 }
 
-/**
- * shut down the chip
- *
- * @author LXZ (2014/11/8)
- */
-rt_weak void rt_hw_cpu_shutdown(void)
-{
-    rt_kprintf("shutdown...\n");
-
-    RT_ASSERT(0);
-}
 /**
  * switch to the first thread,it just call one time
  *

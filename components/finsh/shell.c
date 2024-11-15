@@ -32,6 +32,11 @@
 #include <fcntl.h>
 #endif /* DFS_USING_POSIX */
 
+#ifdef RT_USING_POSIX_STDIO
+#include <unistd.h>
+#include <posix/stdio.h>
+#endif /* RT_USING_POSIX_STDIO */
+
 /* finsh thread */
 #ifndef RT_USING_HEAP
     static struct rt_thread finsh_thread;
@@ -112,7 +117,11 @@ const char *finsh_get_prompt(void)
     getcwd(&finsh_prompt[rt_strlen(finsh_prompt)], RT_CONSOLEBUF_SIZE - rt_strlen(finsh_prompt));
 #endif
 
-    strcat(finsh_prompt, ">");
+    if (rt_strlen(finsh_prompt) + 2 < RT_CONSOLEBUF_SIZE)
+    {
+        finsh_prompt[rt_strlen(finsh_prompt)] = '>';
+        finsh_prompt[rt_strlen(finsh_prompt) + 1] = '\0';
+    }
 
     return finsh_prompt;
 }
@@ -150,7 +159,7 @@ int finsh_getchar(void)
 #ifdef RT_USING_DEVICE
     char ch = 0;
 #ifdef RT_USING_POSIX_STDIO
-    if(read(STDIN_FILENO, &ch, 1) > 0)
+    if(read(rt_posix_stdio_get_console(), &ch, 1) > 0)
     {
         return ch;
     }
@@ -381,6 +390,10 @@ static void shell_auto_complete(char *prefix)
     rt_kprintf("\n");
     msh_auto_complete(prefix);
 
+#ifdef FINSH_USING_OPTION_COMPLETION
+    msh_opt_auto_complete(prefix);
+#endif
+
     rt_kprintf("%s%s", FINSH_PROMPT, prefix);
 }
 
@@ -444,9 +457,27 @@ static void shell_push_history(struct finsh_shell *shell)
 }
 #endif
 
-void finsh_thread_entry(void *parameter)
+#ifdef RT_USING_HOOK
+static void (*_finsh_thread_entry_hook)(void);
+
+/**
+ * @ingroup finsh
+ *
+ * @brief This function set a hook function at the entry of finsh thread
+ *
+ * @param hook the function point to be called
+ */
+void finsh_thread_entry_sethook(void (*hook)(void))
+{
+    _finsh_thread_entry_hook = hook;
+}
+#endif /* RT_USING_HOOK */
+
+static void finsh_thread_entry(void *parameter)
 {
     int ch;
+
+    RT_OBJECT_HOOK_CALL(_finsh_thread_entry_hook, ());
 
     /* normal is echo mode */
 #ifndef FINSH_ECHO_DISABLE_DEFAULT
@@ -686,7 +717,7 @@ void finsh_thread_entry(void *parameter)
     } /* end of device read */
 }
 
-void finsh_system_function_init(const void *begin, const void *end)
+static void finsh_system_function_init(const void *begin, const void *end)
 {
     _syscall_table_begin = (struct finsh_syscall *) begin;
     _syscall_table_end = (struct finsh_syscall *) end;
